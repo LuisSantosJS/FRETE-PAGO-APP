@@ -25,7 +25,6 @@ interface Item {
     empresa: string
     pagamento: string;
     truck: string;
-
 }
 
 const DATA: Item[] = [
@@ -123,7 +122,6 @@ const HeaderFlatlist = () => {
     )
 }
 
-
     return (
         <>
             <View style={[styles.headerHome, { elevation: 5 }]}>
@@ -137,7 +135,7 @@ const HeaderFlatlist = () => {
                     />
                 </View>
             </View>
-            <View style={[styles.container, { top: -((width * 0.13) / 2) }]}>
+            <View style={[styles.container, { top: -((width * 0.13) / 2),  }]}>
                 <FlatList
                     data={DATA}
                     style={{ flex: 1, width: '90%' }}
