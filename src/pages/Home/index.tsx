@@ -8,6 +8,8 @@ import {
     View
 } from 'react-native';
 import styles from './styles';
+import { BorderlessButton, TouchableOpacity} from 'react-native-gesture-handler';
+import { useNavigation } from '@react-navigation/native';
 const Logo = require('../../assets/fretepago.png');
 const Search = require('../../assets/search.png');
 const PropostaAceita = require('../../assets/propostaaceita.png');
@@ -68,11 +70,12 @@ const DATA: Item[] = [
 ]
 
 const Home: React.FC = () => {
+    const navigation = useNavigation();
 
     const RenderItem = (item: Item, index: number) => {
         return (
             <>
-                <View style={[styles.viewFlexItem]}>
+                <TouchableOpacity onPress={()=> navigation.navigate('InfoCorrida')} activeOpacity={0.7} style={[styles.viewFlexItem]}>
                     <View style={styles.borderItemLeft} />
                     <View style={styles.itemBody}>
                         <View style={styles.cantoItemLeft}>
@@ -89,10 +92,36 @@ const Home: React.FC = () => {
                             <Image resizeMode='contain' style={styles.viewLogoItem} source={ViewLogoItem} />
                         </View>
                     </View>
-                </View>
+                </TouchableOpacity>
             </>
         )
     }
+
+
+const HeaderFlatlist = () => {
+    return (
+        <>
+            <View style={{ height: (width * 0.13), width: '100%' }} />
+            <View style={styles.headerFlatlist}>
+                <BorderlessButton onPress={()=> navigation.navigate('Propostas')} style={styles.boxProposta}>
+                    <Image resizeMode='contain' style={styles.imgBoxProposta} source={Proposta} />
+                    <Text style={styles.propostaText}>Propostas</Text>
+                </BorderlessButton>
+                <BorderlessButton onPress={()=> navigation.navigate('PropostasAceitas')} style={styles.boxProposta}>
+                    <Image resizeMode='contain' style={styles.imgBoxProposta} source={PropostaAceita} />
+                    <Text style={styles.propostaText}>Propostas Aceitas</Text>
+                </BorderlessButton >
+                <BorderlessButton onPress={()=> navigation.navigate('Entregues')} style={styles.boxProposta}>
+                    <Image resizeMode='contain' style={styles.imgBoxProposta} source={Entregue} />
+                    <Text style={styles.propostaText}>Entregues</Text>
+                </BorderlessButton>
+            </View>
+            <View style={styles.viewHeaderFlatlistTitle}>
+                <Text style={styles.textTitleHeaderFlatlist}>Fretes Disponíveis</Text>
+            </View>
+        </>
+    )
+}
 
 
     return (
@@ -127,29 +156,3 @@ export default Home;
 
 
 
-
-const HeaderFlatlist = () => {
-    return (
-        <>
-            <View style={{ height: (width * 0.13), width: '100%' }} />
-            <View style={styles.headerFlatlist}>
-                <View style={styles.boxProposta}>
-                    <Image resizeMode='contain' style={styles.imgBoxProposta} source={Proposta} />
-                    <Text style={styles.propostaText}>Propostas</Text>
-                </View>
-                <View style={styles.boxProposta}>
-                    <Image resizeMode='contain' style={styles.imgBoxProposta} source={PropostaAceita} />
-                    <Text style={styles.propostaText}>Propostas Aceitas</Text>
-                </View>
-                <View style={styles.boxProposta}>
-                    <Image resizeMode='contain' style={styles.imgBoxProposta} source={Entregue} />
-                    <Text style={styles.propostaText}>Entregues</Text>
-                </View>
-
-            </View>
-            <View style={styles.viewHeaderFlatlistTitle}>
-                <Text style={styles.textTitleHeaderFlatlist}>Fretes Disponíveis</Text>
-            </View>
-        </>
-    )
-}

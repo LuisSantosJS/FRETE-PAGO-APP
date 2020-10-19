@@ -85,6 +85,7 @@ const styles = StyleSheet.create({
     },
     viewFlexItem: {
         width: '98%',
+        backgroundColor:'#e5e5e5',
         height: width * 0.4,
         flexDirection: 'row',
         shadowColor: "#707070",
@@ -142,7 +143,6 @@ const styles = StyleSheet.create({
     textItem:{
         color:'#707070',
         fontSize: width*0.035
-
     }
 });
 export default styles;

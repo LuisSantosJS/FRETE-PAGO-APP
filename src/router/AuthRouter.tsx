@@ -40,14 +40,8 @@ const AuthRouter: React.FC = () => {
                 />
                 <AppStack.Screen
                     options={{
-                        header: ({ navigation }) =>
-                            <View style={styles.header}>
-                                <RectButton onPress={() => navigation.goBack()} style={styles.arrowView}>
-                                    <Icon.MaterialIcons name={Platform.OS === 'ios' ? 'arrow-back-ios' : 'arrow-back'} size={width * 0.08} color='#707070' />
-                                </RectButton>
-                                <Image source={FretePago} style={styles.logoHeaderImage} />
-                                <View style={styles.arrowView} />
-                            </View>
+                        header: ({ navigation }) => Header(navigation)
+            
                     }}
                     component={RegisterTruck}
                     name='RegisterTruck'
@@ -57,3 +51,15 @@ const AuthRouter: React.FC = () => {
     );
 }
 export default AuthRouter;
+
+const Header = (navigation: any) => {
+    return (
+        <View style={styles.header}>
+            <RectButton onPress={() => navigation.goBack()} style={styles.arrowView}>
+                <Icon.MaterialIcons name={Platform.OS === 'ios' ? 'arrow-back-ios' : 'arrow-back'} size={width * 0.08} color='#707070' />
+            </RectButton>
+            <Image source={FretePago} style={styles.logoHeaderImage} />
+            <View style={styles.arrowView} />
+        </View>
+    )
+}
