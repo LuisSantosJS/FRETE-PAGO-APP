@@ -7,6 +7,7 @@ import {
     Dimensions
 } from 'react-native';
 import styles from './styles';
+import { getStatusBarHeight } from 'react-native-status-bar-height';
 import Icon from '../assets/icons/icons';
 import InfoCorrida from '../pages/InfoCorrida'
 import { NavigationContainer } from '@react-navigation/native';
@@ -25,7 +26,7 @@ const width = Dimensions.get("window").width;
 const TruckRouter: React.FC = () => {
     return (
         <NavigationContainer>
-            <StatusBar barStyle="light-content" backgroundColor='#191919' />
+            <StatusBar barStyle="dark-content" backgroundColor='white' />
             <AppStack.Navigator>
                 <AppStack.Screen
                     options={{
@@ -85,12 +86,15 @@ export default TruckRouter;
 
 const Header = (navigation: any) => {
     return (
-        <View style={styles.header}>
-            <RectButton onPress={() => navigation.goBack()} style={styles.arrowView}>
-                <Icon.MaterialIcons name={Platform.OS === 'ios' ? 'arrow-back-ios' : 'arrow-back'} size={width * 0.08} color='#707070' />
-            </RectButton>
-            <Image source={FretePago} style={styles.logoHeaderImage} />
-            <View style={styles.arrowView} />
-        </View>
+        <>
+            <View style={{ width: '100%', height: getStatusBarHeight(true), backgroundColor:'white' }} />
+            <View style={styles.header}>
+                <RectButton onPress={() => navigation.goBack()} style={styles.arrowView}>
+                    <Icon.MaterialIcons name={Platform.OS === 'ios' ? 'arrow-back-ios' : 'arrow-back'} size={width * 0.08} color='#707070' />
+                </RectButton>
+                <Image source={FretePago} style={styles.logoHeaderImage} />
+                <View style={styles.arrowView} />
+            </View>
+        </>
     )
 }

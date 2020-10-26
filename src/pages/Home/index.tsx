@@ -8,6 +8,8 @@ import {
     View
 } from 'react-native';
 import styles from './styles';
+import { getStatusBarHeight } from 'react-native-status-bar-height';
+
 import { BorderlessButton, RectButton, TouchableOpacity } from 'react-native-gesture-handler';
 import { useNavigation } from '@react-navigation/native';
 const Logo = require('../../assets/fretepago.png');
@@ -127,6 +129,7 @@ const Home: React.FC = () => {
 
     return (
         <>
+            <View style={{ width: '100%', height: getStatusBarHeight(true), backgroundColor:'white' }} />
             <View style={[styles.headerHome,]}>
                 <Image resizeMode='contain' style={[styles.logo]} source={Logo}
                 />
@@ -152,13 +155,13 @@ const Home: React.FC = () => {
 
             </View>
             <View style={styles.tapBar}>
-                <RectButton onPress={()=> navigation.navigate('ProfileTruck')} style={styles.buttonTab}>
+                <RectButton onPress={() => navigation.navigate('ProfileTruck')} style={styles.buttonTab}>
                     <Image style={{ height: '50%' }} resizeMode='contain' source={PersonCalendarIcone} />
                 </RectButton>
                 <RectButton style={styles.buttonTab}>
                     <Image style={{ height: '80%' }} resizeMode='contain' source={HomeIcone} />
                 </RectButton>
-                <RectButton onPress={()=> navigation.navigate('NotificationTruck')} style={styles.buttonTab}>
+                <RectButton onPress={() => navigation.navigate('NotificationTruck')} style={styles.buttonTab}>
                     <Image style={{ height: '80%' }} resizeMode='contain' source={NotificationIcone} />
                 </RectButton>
             </View>

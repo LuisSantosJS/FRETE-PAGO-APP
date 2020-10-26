@@ -14,6 +14,9 @@ const InitialPage: React.FC = () => {
     const handleLoginCaminhoneiro = () => {
         navigation.navigate('LoginTruck');
     }
+    const handleLoginCompany = () => {
+        navigation.navigate('BeforeLoginCompany');
+    }
     return (
         <>
             <View style={{ width: '100%', height: getStatusBarHeight(true), backgroundColor: '#FD9606' }} />
@@ -28,7 +31,7 @@ const InitialPage: React.FC = () => {
                 <RectButton onPress={handleLoginCaminhoneiro} style={[styles.buttomTabBar, { backgroundColor: '#000000' }]}>
                     <Text style={styles.textButtomTab}>Sou Caminhoneiro</Text>
                 </RectButton>
-                <RectButton style={[styles.buttomTabBar, { backgroundColor: '#FD9606' }]}>
+                <RectButton onPress={handleLoginCompany} style={[styles.buttomTabBar, { backgroundColor: '#FD9606' }]}>
                     <Text style={styles.textButtomTab}>Sou Empresa</Text>
                 </RectButton>
             </View>

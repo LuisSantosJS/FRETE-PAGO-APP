@@ -5,7 +5,7 @@ const height = Dimensions.get("window").height;
 const styles = StyleSheet.create({
     header: {
         width: width,
-        height: width * 0.2,
+        height: width * 0.14,
         flexDirection: 'row',
         backgroundColor:'white',
         justifyContent: 'space-between',

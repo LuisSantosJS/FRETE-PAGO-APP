@@ -2,8 +2,9 @@ import React from 'react';
 import { useLoading, useStatus } from '../context/ContextAuth';
 import AuthRouter from './AuthRouter';
 import Waiting from '../pages/Waiting';
-import LoadingPage from '../pages/Loading'
-import TruckRouter from './TruckRouter'
+import LoadingPage from '../pages/Loading';
+import TruckRouter from './TruckRouter';
+import CompanyRouter from './CompanyRouter';
 const MainRouter: React.FC = () => {
     const { loading } = useLoading();
     const { status } = useStatus();
@@ -18,7 +19,7 @@ const MainRouter: React.FC = () => {
         case 2:
             return <TruckRouter />;
         case 3:
-            return null;
+            return <CompanyRouter />;
         default:
             return <AuthRouter />;
     }
