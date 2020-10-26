@@ -11,19 +11,18 @@ const styles = StyleSheet.create({
     },
     headerHome: {
         width: '100%',
-        height: width * 0.28,
+        height: width * 0.30,
         backgroundColor: 'white',
         alignItems: 'center',
-        justifyContent: 'flex-start'
+        justifyContent: 'space-around'
     },
     logo: {
-        height: '70%',
+        height: '50%',
     },
     search: {
         width: '70%',
         height: width * 0.13,
         backgroundColor: 'white',
-        top: (width * 0.02) / 2,
         borderRadius: width * 0.06,
         flexDirection: 'row',
         alignItems: 'center',
@@ -35,7 +34,7 @@ const styles = StyleSheet.create({
         height: '80%'
     },
     searchInput: {
-        height: '100%',
+        height: width * 0.13,
         width: '90%'
     },
     shadow: {
@@ -46,7 +45,6 @@ const styles = StyleSheet.create({
         },
         shadowOpacity: 0.25,
         shadowRadius: 3.84,
-        elevation: 2,
     },
     headerFlatlist: {
         width: '100%',
@@ -104,11 +102,11 @@ const styles = StyleSheet.create({
     },
     borderItemLeft: {
         height: '100%',
-        width: '5%',
+        width: '2%',
         backgroundColor: '#FF9600'
     },
     itemBody: {
-        width: '95%',
+        width: '98%',
         height: '100%',
         backgroundColor: 'white',
         flexDirection:'row',
@@ -143,6 +141,16 @@ const styles = StyleSheet.create({
     textItem:{
         color:'#707070',
         fontSize: width*0.035
+    },
+    tapBar:{
+        width:'100%',
+        height: width*0.13,
+        flexDirection:'row',
+        alignItems:'center',
+        justifyContent:'space-around',
+        backgroundColor:'#f7f7f7',
+        borderTopWidth: width*0.0009,
+        borderColor: '#e5e5e5'
     }
 });
 export default styles;
