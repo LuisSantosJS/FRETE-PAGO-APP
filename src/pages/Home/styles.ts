@@ -151,6 +151,12 @@ const styles = StyleSheet.create({
         backgroundColor:'#f7f7f7',
         borderTopWidth: width*0.0009,
         borderColor: '#e5e5e5'
+    },
+    buttonTab:{
+        height:'100%',
+        width: '33%',
+        alignItems:'center',
+        justifyContent:'center'
     }
 });
 export default styles;

@@ -8,7 +8,7 @@ import {
     View
 } from 'react-native';
 import styles from './styles';
-import { BorderlessButton, TouchableOpacity } from 'react-native-gesture-handler';
+import { BorderlessButton, RectButton, TouchableOpacity } from 'react-native-gesture-handler';
 import { useNavigation } from '@react-navigation/native';
 const Logo = require('../../assets/fretepago.png');
 const Search = require('../../assets/search.png');
@@ -152,10 +152,15 @@ const Home: React.FC = () => {
 
             </View>
             <View style={styles.tapBar}>
-                <Image style={{ height: '50%' }} resizeMode='contain' source={PersonCalendarIcone} />
-                <Image style={{ height: '80%' }} resizeMode='contain' source={HomeIcone} />
-                <Image style={{ height: '80%' }} resizeMode='contain' source={NotificationIcone} />
-
+                <RectButton onPress={()=> navigation.navigate('ProfileTruck')} style={styles.buttonTab}>
+                    <Image style={{ height: '50%' }} resizeMode='contain' source={PersonCalendarIcone} />
+                </RectButton>
+                <RectButton style={styles.buttonTab}>
+                    <Image style={{ height: '80%' }} resizeMode='contain' source={HomeIcone} />
+                </RectButton>
+                <RectButton onPress={()=> navigation.navigate('NotificationTruck')} style={styles.buttonTab}>
+                    <Image style={{ height: '80%' }} resizeMode='contain' source={NotificationIcone} />
+                </RectButton>
             </View>
         </>
     )

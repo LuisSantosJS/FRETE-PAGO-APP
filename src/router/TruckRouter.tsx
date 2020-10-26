@@ -16,6 +16,8 @@ import Home from '../pages/Home';
 import Propostas from '../pages/Propostas';
 import PropostasAceitas from '../pages/PropostasAceitas';
 import Entregues from '../pages/Entregues';
+import ProfileTruck from '../pages/ProfileTruck';
+import NotificationTruck from '../pages/NotificationTruck';
 const AppStack = createStackNavigator();
 const FretePago = require('../assets/fretepago.png');
 const width = Dimensions.get("window").width;
@@ -59,6 +61,20 @@ const TruckRouter: React.FC = () => {
                     }}
                     component={Entregues}
                     name='Entregues'
+                />
+                <AppStack.Screen
+                    options={{
+                        header: ({ navigation }) => Header(navigation)
+                    }}
+                    component={ProfileTruck}
+                    name='ProfileTruck'
+                />
+                <AppStack.Screen
+                    options={{
+                        header: ({ navigation }) => Header(navigation)
+                    }}
+                    component={NotificationTruck}
+                    name='NotificationTruck'
                 />
             </AppStack.Navigator>
         </NavigationContainer>
