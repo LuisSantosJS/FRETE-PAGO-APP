@@ -74,12 +74,19 @@ const styles = StyleSheet.create({
     itemRenderCarroseal:{
         width:'100%',
         height:'80%',
-        backgroundColor:'#e5e5e5'
+        backgroundColor:'#e5e5e5',
+        alignItems:'center',
+        justifyContent:'center'
     },
     textLogins:{
         color:'#FD9606',
         fontSize: width*0.04,
         padding: width*0.03
+    },
+    textePlanos:{
+        color:'#141414',
+        fontSize: width*0.045,
+        fontWeight:'500'
     }
 
 });

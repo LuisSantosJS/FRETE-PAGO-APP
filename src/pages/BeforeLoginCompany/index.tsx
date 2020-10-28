@@ -36,7 +36,7 @@ const BeforeLoginCompany: React.FC = () => {
         return (
             <>
                 <View style={styles.itemRenderCarroseal}>
-
+                    <Text style={styles.textePlanos}>PLANOS</Text>
                 </View>
             </>
         )

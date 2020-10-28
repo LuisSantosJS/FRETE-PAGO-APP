@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
     FlatList,
     Image,
@@ -7,9 +7,10 @@ import {
     Dimensions,
     View
 } from 'react-native';
+
 import styles from './styles';
 import { getStatusBarHeight } from 'react-native-status-bar-height';
-
+import faker from 'faker'
 import { BorderlessButton, RectButton, TouchableOpacity } from 'react-native-gesture-handler';
 import { useNavigation } from '@react-navigation/native';
 const Logo = require('../../assets/fretepago.png');
@@ -28,44 +29,64 @@ interface Item {
     pagamento: string;
     truck: string;
 }
+faker.locale = 'pt_BR'
 
 const DATA: Item[] = [
     {
         id: '1',
-        destino: 'Rio de Janeiro',
+        destino: faker.address.state(),
         carga: 'Produtos de beleza',
-        empresa: 'Roxy Tech',
+        empresa: faker.company.companyName(),
         pagamento: 'A Combinar',
         truck: 'Carroceriabulgo v2',
 
     },
     {
         id: '2',
-        destino: 'Rio de Janeiro',
+        destino: faker.address.state(),
         carga: 'Produtos de beleza',
-        empresa: 'Roxy Tech',
+        empresa: faker.company.companyName(),
         pagamento: 'A Combinar',
         truck: 'Carroceriabulgo v2',
 
     },
     {
         id: '3',
-        destino: 'Rio de Janeiro',
+        destino: faker.address.state(),
         carga: 'Produtos de beleza',
-        empresa: 'Roxy Tech',
+        empresa: faker.company.companyName(),
         pagamento: 'A Combinar',
         truck: 'Carroceriabulgo v2',
 
     },
     {
         id: '4',
-        destino: 'Rio de Janeiro',
+        destino: faker.address.state(),
         carga: 'Produtos de beleza',
-        empresa: 'Roxy Tech',
+        empresa: faker.company.companyName(),
         pagamento: 'A Combinar',
         truck: 'Carroceriabulgo v2',
 
     },
+    {
+        id: '5',
+        destino: faker.address.state(),
+        carga: 'Produtos de beleza',
+        empresa: faker.company.companyName(),
+        pagamento: 'A Combinar',
+        truck: 'Carroceriabulgo v2',
+
+    },
+    {
+        id: '6',
+        destino: faker.address.state(),
+        carga: 'Produtos de beleza',
+        empresa: faker.company.companyName(),
+        pagamento: 'A Combinar',
+        truck: 'Carroceriabulgo v2',
+
+    },
+
 
 
 ]
@@ -74,6 +95,7 @@ const HomeIcone = require('../../assets/home.png');
 const PersonCalendarIcone = require('../../assets/calendar_person.png');
 const Home: React.FC = () => {
     const navigation = useNavigation();
+
 
     const RenderItem = (item: Item, index: number) => {
         return (

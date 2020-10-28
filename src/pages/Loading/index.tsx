@@ -3,7 +3,8 @@ import {
     View,
     Animated,
     Image,
-    Platform
+    Platform,
+    Text
 } from 'react-native';
 import styles from './styles';
 import { getStatusBarHeight } from 'react-native-status-bar-height';
@@ -17,6 +18,7 @@ const LoadingPage: React.FC = () => {
                 <View style={styles.viewCenter}>
                     <Image style={{ height: '20%', maxWidth: '50%' }} source={Logo} />
                     <Image style={{ height: '25%', maxWidth: '35%' }} source={Loading} />
+                    <Text style={{color:'#141414', fontSize: 22, textAlign:'center'}}>Algumas funcionalidades estão indisponíveis</Text>
                 </View>
 
             </View>

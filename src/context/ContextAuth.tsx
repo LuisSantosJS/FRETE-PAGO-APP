@@ -1,5 +1,5 @@
-import React, { createContext, useState, useContext } from 'react';
-
+import React, { createContext, useState, useContext, useEffect } from 'react';
+import AsyncStorage from '@react-native-community/async-storage';
 type ContextType = {
     userSaved: boolean;
     setUserSaved: (value: boolean) => void;
@@ -24,8 +24,29 @@ const ContextApp = createContext<ContextType>({
 
 const ProviderAuth: React.FC = ({ children }) => {
     const [userSaved, setUserSaved] = useState<boolean>(false);
-    const [loading, setLoading] = useState<boolean>(false);
+    const [loading, setLoading] = useState<boolean>(true);
     const [status, setStatus] = useState<number>(0);
+    useEffect(() => {
+        getStatus();
+    }, []);
+
+    const getStatus = async () => {
+        try {
+            const value = await AsyncStorage.getItem('@status')
+            if (value !== null) {
+                console.log('status:',value)
+                setStatus(Number(value));
+            }
+            return finish();
+        } catch (e) {
+            // error reading value
+        }
+
+    }
+    const finish = () => {
+        setInterval(() => setLoading(false), 2500);
+    }
+
 
     return (
         <ContextApp.Provider value={{

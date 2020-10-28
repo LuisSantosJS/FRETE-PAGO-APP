@@ -9,6 +9,7 @@ import {
 import styles from './styles';
 import CheckBox from '@react-native-community/checkbox';
 import { bancos } from '../../JSON/bancos';
+import AsyncStorage from '@react-native-community/async-storage';
 //@ts-ignore
 import { mask } from 'remask';
 import Toast from 'react-native-simple-toast';
@@ -242,8 +243,25 @@ const RegisterTruck: React.FC = () => {
     }
 
     const verInputs5 = () => {
-        setStatus(1)
+        if(!toggleCheckBox){
+            return Toast.showWithGravity('Aceite os termos!', Toast.LONG, Toast.TOP);
+        }
+       // setStatus(1)
+       return storeStatus(1)
+
     }
+
+    const storeStatus = async (value: number) => {
+        try {
+            await AsyncStorage.setItem('@status', `${value}`);
+            return setStatus(value);
+        } catch (e) {
+            // saving error
+            console.log(e)
+        }
+
+    }
+
 
     const vefific0 = () => {
         switch (stageProgressInputs) {

@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
     View,
     Image,
@@ -6,9 +6,11 @@ import {
     TextInput,
     TouchableOpacity, Platform
 } from 'react-native';
-//@ts-ignore
-import ReCaptcha from 'react-native-recaptcha-v3'
+
+import * as EmailValidator from 'email-validator';
+import Toast from 'react-native-simple-toast';
 import styles from './styles';
+import AsyncStorage from '@react-native-community/async-storage';
 import { getStatusBarHeight } from 'react-native-status-bar-height';
 import { useNavigation } from '@react-navigation/native';
 import KeyboardH from '../../functions/keyboard';
@@ -21,6 +23,8 @@ import { useStatus } from '../../context/ContextAuth'
 const LoginCompany: React.FC = () => {
     const navigation = useNavigation();
     const keyboardHeight = KeyboardH();
+    const [emailInput, setEmailInput] = useState<string>('');
+    const [senhaInput, setSenhaInput] = useState<string>('');
     const { setStatus } = useStatus()
     const handleRegister = () => {
 
@@ -29,7 +33,33 @@ const LoginCompany: React.FC = () => {
     }, [keyboardHeight]);
 
     const onLogin = () => {
-        setStatus(3);
+        if (emailInput.length === 0) {
+            return Toast.showWithGravity('Insira seu email!', Toast.LONG, Toast.TOP);
+        }
+        const valueValidEmail = EmailValidator.validate(String(emailInput.toLowerCase()));
+        if (!valueValidEmail) {
+            return Toast.showWithGravity('Insira um email válido!', Toast.LONG, Toast.TOP);
+        }
+        if (senhaInput.length === 0) {
+            return Toast.showWithGravity('Insira sua senha!', Toast.LONG, Toast.TOP);
+        }
+        if ((String(emailInput).toLowerCase() !== 'teste@email.com') && (String(senhaInput) !== 'testesenha')) {
+            return Toast.showWithGravity('Usuário não existe!', Toast.LONG, Toast.TOP);
+        }
+        storeStatus(3);
+    }
+
+
+
+    const storeStatus = async (value: number) => {
+        try {
+            await AsyncStorage.setItem('@status', `${value}`);
+            return setStatus(value);
+        } catch (e) {
+            // saving error
+            console.log(e)
+        }
+
     }
     return (
         <>
@@ -49,6 +79,8 @@ const LoginCompany: React.FC = () => {
                         <TextInput
                             placeholderTextColor='#707070'
                             style={styles.input}
+                            value={emailInput}
+                            onChangeText={(e) => setEmailInput(e)}
                             placeholder={'Email'}
                             autoCompleteType={'email'}
                             keyboardType={'email-address'}
@@ -61,6 +93,8 @@ const LoginCompany: React.FC = () => {
                         <TextInput
                             placeholderTextColor='#707070'
                             style={styles.input}
+                            value={senhaInput}
+                            onChangeText={(e) => setSenhaInput(e)}
                             autoCapitalize='none'
                             placeholder={'Senha'}
                             secureTextEntry

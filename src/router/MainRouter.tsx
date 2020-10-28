@@ -11,7 +11,7 @@ const MainRouter: React.FC = () => {
     if (loading) {
         return <LoadingPage />
     }
-    switch (status) {
+    switch (Number(status)) {
         case 0:
             return <AuthRouter />;
         case 1:

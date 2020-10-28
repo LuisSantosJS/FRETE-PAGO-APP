@@ -8,7 +8,8 @@ import styles from './styles';
 import { RectButton } from 'react-native-gesture-handler';
 import { getStatusBarHeight } from 'react-native-status-bar-height';
 import { useNavigation } from '@react-navigation/native';
-
+import { useStatus } from '../../context/ContextAuth';
+import AsyncStorage from '@react-native-community/async-storage';
 const NotificationIcone = require('../../assets/notification.png')
 const HomeIcone = require('../../assets/home.png');
 const PersonCalendarIcone = require('../../assets/calendar_person.png');
@@ -17,6 +18,11 @@ const curvas = require('../../assets/curvas.png');
 const profile = require('../../assets/profile.png');
 const ProfileCompany: React.FC = () => {
     const navigation = useNavigation();
+    const { setStatus } = useStatus();
+    const onExitAccount = async () => {
+        AsyncStorage.clear();
+        setStatus(0);
+    }
     return (
         <>
             <View style={{ width: '100%', height: getStatusBarHeight(true), backgroundColor: 'white' }} />
@@ -25,26 +31,26 @@ const ProfileCompany: React.FC = () => {
             </View>
             <View style={styles.container}>
                 <Image source={curvas} resizeMode='stretch' style={{ width: '100%' }} />
-                <View style={styles.viewRowOptions}>
+                <RectButton style={styles.viewRowOptions}>
                     <Image source={profile} resizeMode='contain' style={{ height: '80%' }} />
                     <Text style={styles.textOptions}>Alterar perfil</Text>
-                </View>
-                <View style={styles.viewRowOptions}>
+                </RectButton>
+                <RectButton style={styles.viewRowOptions}>
                     <Image source={profile} resizeMode='contain' style={{ height: '80%' }} />
                     <Text style={styles.textOptions}>Alterar dados empresa</Text>
-                </View>
-                <View style={styles.viewRowOptions}>
+                </RectButton>
+                <RectButton style={styles.viewRowOptions}>
                     <Image source={profile} resizeMode='contain' style={{ height: '80%' }} />
                     <Text style={styles.textOptions}>Manual de uso</Text>
-                </View>
-                <View style={styles.viewRowOptions}>
+                </RectButton>
+                <RectButton style={styles.viewRowOptions}>
                     <Image source={profile} resizeMode='contain' style={{ height: '80%' }} />
                     <Text style={styles.textOptions}>Sobre</Text>
-                </View>
-                <View style={[styles.viewRowOptions, { borderBottomWidth: 1 }]}>
+                </RectButton>
+                <RectButton onPress={onExitAccount} style={[styles.viewRowOptions, { borderBottomWidth: 1 }]}>
                     <Image source={profile} resizeMode='contain' style={{ height: '80%' }} />
                     <Text style={styles.textOptions}>Sair</Text>
-                </View>
+                </RectButton>
 
             </View>
 
@@ -52,7 +58,7 @@ const ProfileCompany: React.FC = () => {
                 <RectButton style={styles.buttonTab}>
                     <Image style={{ height: '50%' }} resizeMode='contain' source={PersonCalendarIcone} />
                 </RectButton>
-                <RectButton onPress={()=> navigation.goBack()} style={styles.buttonTab}>
+                <RectButton onPress={() => navigation.goBack()} style={styles.buttonTab}>
                     <Image style={{ height: '80%' }} resizeMode='contain' source={HomeIcone} />
                 </RectButton>
                 <RectButton onPress={() => navigation.navigate('NotificationCompany')} style={styles.buttonTab}>

@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
     View,
     Image,
@@ -7,19 +7,24 @@ import {
     TouchableOpacity, Platform
 } from 'react-native';
 import styles from './styles';
+import AsyncStorage from '@react-native-community/async-storage';
+import * as EmailValidator from 'email-validator';
+import Toast from 'react-native-simple-toast';
 import { getStatusBarHeight } from 'react-native-status-bar-height';
 import { useNavigation } from '@react-navigation/native';
 import KeyboardH from '../../functions/keyboard';
 const FretePago = require('../../assets/fretepago.png');
 const Email = require('../../assets/email.png');
 const Senha = require('../../assets/senha.png');
-import {useStatus} from '../../context/ContextAuth'
+import { useStatus } from '../../context/ContextAuth'
 
 
 const LoginTruck: React.FC = () => {
     const navigation = useNavigation();
     const keyboardHeight = KeyboardH();
-    const {setStatus} = useStatus()
+    const [emailInput, setEmailInput] = useState<string>('');
+    const [senhaInput, setSenhaInput] = useState<string>('');
+    const { setStatus } = useStatus()
     const handleRegister = () => {
         navigation.navigate('RegisterTruck')
     }
@@ -28,7 +33,32 @@ const LoginTruck: React.FC = () => {
     }, [keyboardHeight]);
 
     const onLogin = () => {
-        setStatus(2);
+        if (emailInput.length === 0) {
+            return Toast.showWithGravity('Insira seu email!', Toast.LONG, Toast.TOP);
+        }
+        const valueValidEmail = EmailValidator.validate(String(emailInput.toLowerCase()));
+        if (!valueValidEmail) {
+            return Toast.showWithGravity('Insira um email válido!', Toast.LONG, Toast.TOP);
+        }
+        if (senhaInput.length === 0) {
+            return Toast.showWithGravity('Insira sua senha!', Toast.LONG, Toast.TOP);
+        }
+        if((String(emailInput).toLowerCase() !== 'teste@email.com') && (String(senhaInput) !== 'testesenha')){
+            return Toast.showWithGravity('Usuário não existe!', Toast.LONG, Toast.TOP);
+        }
+        return storeStatus(2);
+
+    }
+
+    const storeStatus = async (value: number) => {
+        try {
+            await AsyncStorage.setItem('@status', `${value}`);
+            return setStatus(value);
+        } catch (e) {
+            // saving error
+            console.log(e)
+        }
+
     }
     return (
         <>
@@ -48,6 +78,8 @@ const LoginTruck: React.FC = () => {
                         <TextInput
                             placeholderTextColor='#707070'
                             style={styles.input}
+                            value={emailInput}
+                            onChangeText={(e) => setEmailInput(e)}
                             placeholder={'Email'}
                             autoCompleteType={'email'}
                             keyboardType={'email-address'}
@@ -60,6 +92,8 @@ const LoginTruck: React.FC = () => {
                         <TextInput
                             placeholderTextColor='#707070'
                             style={styles.input}
+                            value={senhaInput}
+                            onChangeText={(e) => setSenhaInput(e)}
                             autoCapitalize='none'
                             placeholder={'Senha'}
                             secureTextEntry

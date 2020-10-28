@@ -65,7 +65,7 @@ const TruckRouter: React.FC = () => {
                 />
                 <AppStack.Screen
                     options={{
-                        header: ({ navigation }) => Header(navigation)
+                        headerShown: false
                     }}
                     component={ProfileTruck}
                     name='ProfileTruck'

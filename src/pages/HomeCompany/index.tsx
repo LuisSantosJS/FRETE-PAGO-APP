@@ -9,6 +9,7 @@ import styles from './styles'
 import Carousel from 'react-native-snap-carousel';
 import { RectButton } from 'react-native-gesture-handler';
 import { useNavigation } from '@react-navigation/native';
+import Toast from 'react-native-simple-toast';
 import { getStatusBarHeight } from 'react-native-status-bar-height';
 const fretePago = require('../../assets/fretepago.png');
 const curvas = require('../../assets/curvas.png');
@@ -45,16 +46,29 @@ const width = Dimensions.get("window").width;
 const HomeCompany: React.FC = () => {
     const navigation = useNavigation();
 
+    const handleNavigate = (name: string) => {
+        if (name === 'FRETES PUBLICADOS') {
+            navigation.navigate('FretesPublicadosCompany')
+        }
+        if(name === 'PAGAMENTO'){
+            navigation.navigate('PagamentosCompany')
+        }
+        if(name === 'FRETES EM ANDAMENTO'){
+            navigation.navigate('FretesAndamentoCompany');
+        }
+        return Toast.showWithGravity('Funcionalidade indisponível', Toast.LONG, Toast.TOP);
+    }
+
     const RenderItem = (item: Item, index: number) => {
         return (
             <>
-                <View style={[styles.itemRenderCarroseal, styles.shadow]}>
+                <RectButton onPress={() => handleNavigate(item.title)} style={[styles.itemRenderCarroseal, styles.shadow]}>
                     <Image source={PropostaIcone} resizeMode='contain' style={{ height: width * 0.25, width: width * 0.25 }} />
                     <View style={styles.metadeDosTextos}>
-                    <Text style={styles.titleItem}>{item.title}</Text>
-                    <Text style={styles.descriptionItem}>{item.description}</Text>
+                        <Text style={styles.titleItem}>{item.title}</Text>
+                        <Text style={styles.descriptionItem}>{item.description}</Text>
                     </View>
-                </View>
+                </RectButton>
             </>
         )
     }
@@ -83,7 +97,7 @@ const HomeCompany: React.FC = () => {
                 </View>
             </View>
             <View style={styles.tapBar}>
-                <RectButton onPress={() =>  navigation.navigate('ProfileCompany')} style={styles.buttonTab}>
+                <RectButton onPress={() => navigation.navigate('ProfileCompany')} style={styles.buttonTab}>
                     <Image style={{ height: '50%' }} resizeMode='contain' source={PersonCalendarIcone} />
                 </RectButton>
                 <RectButton style={styles.buttonTab}>

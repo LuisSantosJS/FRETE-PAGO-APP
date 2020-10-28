@@ -9,6 +9,11 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center'
     },
+    textNotification:{
+        color:'#141414',
+        fontSize: width*0.045,
+        fontWeight: '400',
+    }
 
 });
 export default styles;

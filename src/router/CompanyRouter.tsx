@@ -16,6 +16,11 @@ import { RectButton } from 'react-native-gesture-handler';
 import HomeCompany from '../pages/HomeCompany';
 import NotificationCompany from '../pages/NotificationCompany';
 import ProfileCompany from '../pages/ProfileCompany';
+import FretesPublicadosCompany from '../pages/FretesPublicadosCompany';
+import PropostasDetalhesCompany from '../pages/PropostasDetalhesCompany';
+import ConfirmarFreteCompany from '../pages/ConfirmarFreteCompany';
+import PagamentosCompany from '../pages/PagamentosCompany';
+import FretesAndamentoCompany from '../pages/FretesAndamentoCompany';
 const AppStack = createStackNavigator();
 const FretePago = require('../assets/fretepago.png');
 const width = Dimensions.get("window").width;
@@ -46,6 +51,46 @@ const CompanyRouter: React.FC = () => {
                     }}
                     component={NotificationCompany}
                     name='NotificationCompany'
+                />
+                <AppStack.Screen
+                    options={{
+                        header: ({ navigation }) => Header(navigation)
+
+                    }}
+                    component={FretesPublicadosCompany}
+                    name='FretesPublicadosCompany'
+                />
+                <AppStack.Screen
+                    options={{
+                        header: ({ navigation }) => Header(navigation)
+
+                    }}
+                    component={PropostasDetalhesCompany}
+                    name='PropostasDetalhesCompany'
+                />
+                <AppStack.Screen
+                    options={{
+                        header: ({ navigation }) => Header(navigation)
+
+                    }}
+                    component={ConfirmarFreteCompany}
+                    name='ConfirmarFreteCompany'
+                />
+                <AppStack.Screen
+                    options={{
+                        header: ({ navigation }) => Header(navigation)
+
+                    }}
+                    component={PagamentosCompany}
+                    name='PagamentosCompany'
+                />
+                <AppStack.Screen
+                    options={{
+                        header: ({ navigation }) => Header(navigation)
+
+                    }}
+                    component={FretesAndamentoCompany}
+                    name='FretesAndamentoCompany'
                 />
             </AppStack.Navigator>
         </NavigationContainer>
