@@ -6,6 +6,7 @@ import {
     TextInput,
     TouchableOpacity, Platform
 } from 'react-native';
+import api from '../../service/api';
 import styles from './styles';
 import AsyncStorage from '@react-native-community/async-storage';
 import * as EmailValidator from 'email-validator';
@@ -43,11 +44,23 @@ const LoginTruck: React.FC = () => {
         if (senhaInput.length === 0) {
             return Toast.showWithGravity('Insira sua senha!', Toast.LONG, Toast.TOP);
         }
-        if((String(emailInput).toLowerCase() !== 'teste@email.com') && (String(senhaInput) !== 'testesenha')){
-            return Toast.showWithGravity('Usuário não existe!', Toast.LONG, Toast.TOP);
-        }
-        return storeStatus(2);
+        return SumbitAPILogin();
+    }
 
+    const SumbitAPILogin = () => {
+        const data = {
+            email: emailInput,
+            password: senhaInput
+        }
+        api.post('/truck/users/login', data).then(res => {
+            if (res.data.message === 'success') {
+                return storeStatus(2);
+            } else {
+                return Toast.showWithGravity(`${res.data.res}`, Toast.LONG, Toast.TOP);
+            }
+        }).catch(() => {
+            return Toast.showWithGravity(`Ocorreu um erro! Tente novamente mais tarde!`, Toast.LONG, Toast.TOP);
+        })
     }
 
     const storeStatus = async (value: number) => {

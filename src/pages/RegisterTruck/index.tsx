@@ -416,7 +416,7 @@ const RegisterTruck: React.FC = () => {
             bodyworkType,
             numberCNH
         };
-        api.post('/users/create', data).then(res => {
+        api.post('/truck/users/create', data).then(res => {
             if (res.data.message === 'success') {
                 return storeStatus();
             }
