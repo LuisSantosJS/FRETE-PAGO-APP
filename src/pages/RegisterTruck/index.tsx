@@ -4,14 +4,20 @@ import {
     View,
     Dimensions,
     Platform,
-    TextInput
+    TextInput,
+    FlatList,
+    TouchableOpacity,
+    ActivityIndicator
 } from 'react-native';
 import styles from './styles';
 import CheckBox from '@react-native-community/checkbox';
-import { bancos } from '../../JSON/bancos';
+import BottomSheet from 'reanimated-bottom-sheet';
+import { bancos, Bank } from '../../JSON/bancos';
 import AsyncStorage from '@react-native-community/async-storage';
 //@ts-ignore
 import { mask } from 'remask';
+import api from '../../service/api';
+import faker from 'faker';
 import Toast from 'react-native-simple-toast';
 import { getStatusBarHeight } from 'react-native-status-bar-height';
 import KeyboardH from '../../functions/keyboard';
@@ -20,14 +26,27 @@ import * as EmailValidator from 'email-validator';
 import { RectButton } from 'react-native-gesture-handler';
 const width = Dimensions.get("window").width;
 const height = Dimensions.get("window").height;
+
+const BANCOS: Bank[] = bancos;
+const TIPOCONTA: string[] = [
+    'Corrente',
+    'Poupança'
+]
+
 const RegisterTruck: React.FC = () => {
     const [stageProgress, setStageProgress] = useState<number>(0);
     const [stageProgressInputs, setStageProgressInputs] = useState<number>(0);
     const [progressTitle, setProgressTitle] = useState<string>('DADOS PESSOAIS');
     const keyboardHeight = KeyboardH();
     const { setStatus } = useStatus()
+    const [loadingSubmit, setLoadingSubmit] = useState<boolean>(false);
     const [toggleCheckBox, setToggleCheckBox] = useState<boolean>(false);
     const [visibleTerms, setVisibleTerms] = useState<boolean>(false);
+    const [selectBank, setSelectBank] = useState<Bank>({ label: 'Selecionar Banco', value: '0' })
+    const [tipoConta, setTipoConta] = useState<string>('Tipo da Conta');
+
+    const sheetRefBancos = React.useRef<any>();
+    const sheetRefTipoConta = React.useRef<any>();
 
     const [name, setName] = useState<string>('');
     const onChangeName = useCallback((e: string) => {
@@ -61,6 +80,58 @@ const RegisterTruck: React.FC = () => {
         const masked: string = mask(e, '99/99/9999');
         setNascimento(masked);
     }, []);
+
+    const [accountCPF, setAccountCPF] = useState<string>('');
+    const onAccountCPF = useCallback((e: string) => {
+        const maskedCPF: string = mask(e, ['999.999.999-99']);
+        setAccountCPF(maskedCPF);
+    }, []);
+
+    const [bodywork, setBodywork] = useState<string>('');
+    const onBodyWork = useCallback((e: string) => {
+        setBodywork(e)
+    }, []);
+
+    const [numberRNTRC, setNumberRNTRC] = useState<string>('');
+    const onNumberRNTRC = useCallback((e: string) => {
+        setNumberRNTRC(e);
+    }, []);
+
+    const [vehiclePlate, setVehiclePlate] = useState<string>('');
+    const onVehiclePlate = useCallback((e: string) => {
+        setVehiclePlate(e)
+    }, [])
+
+    const [vehicleModel, setVehicleModel] = useState<string>('');
+    const onVehicleModel = useCallback((e: string) => {
+        setVehicleModel(e)
+    }, []);
+
+    const [nameAccount, setNameAccount] = useState<string>('');
+    const onNameAccount = useCallback((e: string) => {
+        setNameAccount(e);
+    }, [])
+
+    const [agency, setAgency] = useState<string>('');
+    const onAgency = useCallback((e: string) => {
+        setAgency(e);
+    }, [])
+
+    const [account, setAccount] = useState<string>('');
+    const onAccount = useCallback((e: string) => {
+        setAccount(e);
+    }, []);
+
+    const [bodyworkType, setBodyworkType] = useState<string>('');
+    const onBodyWorkType = useCallback((e: string) => {
+        setBodyworkType(e);
+    }, []);
+
+    const [numberCNH, setNumberCNH] = useState<string>('');
+    const onNumberCNH = useCallback((e: string) => {
+        setNumberCNH(e);
+    }, [])
+
     useEffect(() => {
     }, [keyboardHeight]);
 
@@ -71,11 +142,13 @@ const RegisterTruck: React.FC = () => {
                 return <>
                     <TextInput
                         style={styles.inputs}
+                        placeholderTextColor={'#8e8e8e'}
                         value={name}
                         onChangeText={e => onChangeName(e)}
                         placeholder={'Nome completo'} />
                     <TextInput
                         style={styles.inputs}
+                        placeholderTextColor={'#8e8e8e'}
                         value={email}
                         textContentType='emailAddress'
                         keyboardType='email-address'
@@ -87,6 +160,7 @@ const RegisterTruck: React.FC = () => {
                     <TextInput
                         style={styles.inputs}
                         value={password}
+                        placeholderTextColor={'#8e8e8e'}
                         secureTextEntry
                         autoCapitalize='none'
                         onChangeText={e => onPassword(e)}
@@ -98,6 +172,7 @@ const RegisterTruck: React.FC = () => {
                         style={styles.inputs}
                         value={telefone}
                         keyboardType='number-pad'
+                        placeholderTextColor={'#8e8e8e'}
                         onChangeText={(e) => onTelefone(e)}
                         placeholder={'Telefone'} />
                     <TextInput
@@ -105,6 +180,7 @@ const RegisterTruck: React.FC = () => {
                         autoCapitalize='none'
                         value={cpf}
                         onChangeText={e => onCpf(e)}
+                        placeholderTextColor={'#8e8e8e'}
                         keyboardType='decimal-pad'
                         placeholder={'CPF'} />
                     <TextInput
@@ -112,22 +188,25 @@ const RegisterTruck: React.FC = () => {
                         value={nascimento}
                         keyboardType='decimal-pad'
                         onChangeText={(e) => onNascimento(e)}
+                        placeholderTextColor={'#8e8e8e'}
                         placeholder={'Data de Nascimento'} />
                 </>;
             case 2:
                 return <>
-                    <TextInput
-                        style={styles.inputs}
-                        placeholder={'Selecione seu banco'}
-                    />
-                    <TextInput
-                        style={styles.inputs}
-                        placeholder={'Tipo de conta'}
-                    />
+
+                    <RectButton onPress={() => sheetRefBancos.current.snapTo(1)} style={styles.inputs}>
+                        <Text style={styles.textItemINput}>{selectBank.label}</Text>
+                    </RectButton>
+                    <RectButton style={styles.inputs} onPress={() => sheetRefTipoConta.current.snapTo(1)}>
+                        <Text style={styles.textItemINput}>{tipoConta}</Text>
+                    </RectButton>
                     <TextInput
                         style={styles.inputs}
                         placeholder={'Agência'}
+                        value={agency}
+                        onChangeText={(e) => onAgency(e)}
                         keyboardType='decimal-pad'
+                        placeholderTextColor={'#8e8e8e'}
                     />
 
                 </>;
@@ -136,14 +215,23 @@ const RegisterTruck: React.FC = () => {
                     <TextInput
                         style={styles.inputs}
                         placeholder={'Número da conta'}
+                        value={account}
+                        onChangeText={(e) => onAccount(e)}
+                        placeholderTextColor={'#8e8e8e'}
                     />
                     <TextInput
                         style={styles.inputs}
                         placeholder={'Titular'}
+                        value={nameAccount}
+                        onChangeText={(e) => onNameAccount(e)}
+                        placeholderTextColor={'#8e8e8e'}
                     />
                     <TextInput
                         style={styles.inputs}
                         placeholder={'CPF TITULAR'}
+                        value={accountCPF}
+                        onChangeText={(e) => onAccountCPF(e)}
+                        placeholderTextColor={'#8e8e8e'}
                         keyboardType='decimal-pad'
                     />
 
@@ -152,15 +240,24 @@ const RegisterTruck: React.FC = () => {
                 return <>
                     <TextInput
                         style={styles.inputs}
+                        value={vehicleModel}
+                        onChangeText={(e) => onVehicleModel(e)}
                         placeholder={'Nome do veículo'}
+                        placeholderTextColor={'#8e8e8e'}
                     />
                     <TextInput
                         style={styles.inputs}
+                        value={vehiclePlate}
+                        onChangeText={(e) => onVehiclePlate(e)}
                         placeholder={'Placa do veículo'}
+                        placeholderTextColor={'#8e8e8e'}
                     />
                     <TextInput
                         style={styles.inputs}
                         placeholder={'Número RNTRC'}
+                        value={numberRNTRC}
+                        onChangeText={(e) => onNumberRNTRC(e)}
+                        placeholderTextColor={'#8e8e8e'}
 
                     />
 
@@ -169,15 +266,24 @@ const RegisterTruck: React.FC = () => {
                 return <>
                     <TextInput
                         style={styles.inputs}
+                        value={bodywork}
+                        onChangeText={(e) => onBodyWork(e)}
                         placeholder={'Carroceria'}
+                        placeholderTextColor={'#8e8e8e'}
                     />
                     <TextInput
                         style={styles.inputs}
                         placeholder={'Tipo'}
+                        value={bodyworkType}
+                        onChangeText={(e) => onBodyWorkType(e)}
+                        placeholderTextColor={'#8e8e8e'}
                     />
                     <TextInput
                         style={styles.inputs}
                         placeholder={'Número da CNH'}
+                        value={numberCNH}
+                        onChangeText={(e) => onNumberCNH(e)}
+                        placeholderTextColor={'#8e8e8e'}
 
                     />
 
@@ -228,30 +334,99 @@ const RegisterTruck: React.FC = () => {
 
     }
     const verInputs2 = () => {
+        if (selectBank.value === '0') {
+            return Toast.showWithGravity('Selecione seu banco!', Toast.LONG, Toast.TOP);
+        }
+        if (tipoConta === 'Tipo da Conta') {
+            return Toast.showWithGravity('Selecione o tipo da conta!', Toast.LONG, Toast.TOP);
+        }
+        if (agency.length === 0) {
+            return Toast.showWithGravity('Digite sua agência!', Toast.LONG, Toast.TOP);
+        }
         //
         setStageProgressInputs(3)
     }
 
     const verInputs3 = () => {
+        if (account.length === 0) {
+            return Toast.showWithGravity('Digite o número da conta!', Toast.LONG, Toast.TOP);
+        }
+        if (nameAccount.length === 0) {
+            return Toast.showWithGravity('Digite o nome do titular da conta!', Toast.LONG, Toast.TOP);
+        }
+        if (accountCPF.length === 0) {
+            return Toast.showWithGravity('Digite o CPF do titular', Toast.LONG, Toast.TOP);
+        }
         setStageProgressInputs(4)
         setStageProgress(2)
 
     }
     const verInputs4 = () => {
+        if (vehicleModel.length === 0) {
+            return Toast.showWithGravity('Digite o modelo do veículo!', Toast.LONG, Toast.TOP);
+        }
+        if (vehiclePlate.length === 0) {
+            return Toast.showWithGravity('Digite a placa do veículo', Toast.LONG, Toast.TOP);
+        }
+        if (numberRNTRC.length === 0) {
+            return Toast.showWithGravity('Digite o número RNTRC', Toast.LONG, Toast.TOP);
+        }
         setStageProgressInputs(5)
         setVisibleTerms(true);
     }
 
     const verInputs5 = () => {
-        if(!toggleCheckBox){
+        if (bodywork.length === 0) {
+            return Toast.showWithGravity('Digite a carroceria!', Toast.LONG, Toast.TOP);
+        }
+        if (bodyworkType.length === 0) {
+            return Toast.showWithGravity('Digite o tipo da carroceria!', Toast.LONG, Toast.TOP);
+        }
+        if (numberCNH.length === 0) {
+            return Toast.showWithGravity('Digite o número da sua CNH!', Toast.LONG, Toast.TOP);
+        }
+        if (!toggleCheckBox) {
             return Toast.showWithGravity('Aceite os termos!', Toast.LONG, Toast.TOP);
         }
-       // setStatus(1)
-       return storeStatus(1)
-
+        return HandleSubmitForm()
     }
 
-    const storeStatus = async (value: number) => {
+    const HandleSubmitForm = () => {
+        if (loadingSubmit) {
+            return;
+        }
+        setLoadingSubmit(true);
+        const data = {
+            name,
+            email,
+            password,
+            telefone,
+            CPF: cpf,
+            dateOfBirth: nascimento,
+            bankNumber: selectBank.value,
+            typeBank: tipoConta,
+            agency,
+            account,
+            nameAccount,
+            accountCPF,
+            vehicleModel,
+            vehiclePlate,
+            numberRNTRC,
+            bodywork,
+            bodyworkType,
+            numberCNH
+        };
+        api.post('/users/create', data).then(res => {
+            if (res.data.message === 'success') {
+                return storeStatus();
+            }
+            return Toast.showWithGravity(`${res.data.res}`, Toast.LONG, Toast.TOP)
+        }).catch(() => {
+            return Toast.showWithGravity('Ocorreu um Erro! Tente novamente mais tarde!', Toast.LONG, Toast.TOP)
+        })
+    }
+    const storeStatus = async () => {
+        const value = 1;
         try {
             await AsyncStorage.setItem('@status', `${value}`);
             return setStatus(value);
@@ -289,6 +464,33 @@ const RegisterTruck: React.FC = () => {
         }
     }
 
+
+    const RenderBancos = (item: Bank, index: number) => {
+        return (
+            <>
+                <TouchableOpacity onPress={() => {
+                    setSelectBank(item);
+                    sheetRefBancos.current.snapTo(0);
+                    console.log(item)
+                }} key={index} style={styles.viewRowItem}>
+                    <Text style={styles.textitemBanco}>{item.label}</Text>
+                </TouchableOpacity>
+            </>
+        )
+    }
+    const RenderOptionsConta = (item: string, index: number) => {
+        return (
+            <>
+                <TouchableOpacity onPress={() => {
+                    setTipoConta(item);
+                    sheetRefTipoConta.current.snapTo(0);
+                    console.log(item)
+                }} key={index} style={styles.viewRowItem}>
+                    <Text style={styles.textitemBanco}>{item}</Text>
+                </TouchableOpacity>
+            </>
+        )
+    }
     return (
         <>
             <View style={{ width: '100%', height: getStatusBarHeight(true), backgroundColor: 'white' }} />
@@ -324,10 +526,71 @@ const RegisterTruck: React.FC = () => {
                 <View style={{ width: '100%', height: keyboardHeight, backgroundColor: 'white' }} />}
             {  keyboardHeight === 0 && <View style={styles.viewButton}>
                 <RectButton onPress={submit} style={styles.submit}>
-                    <Text style={styles.textSubmit}>PRÓXIMO</Text>
+                    {loadingSubmit ?
+                        <ActivityIndicator size='large' color='white' /> :
+                        <Text style={styles.textSubmit}>PRÓXIMO</Text>}
                 </RectButton>
             </View>}
+            <BottomSheet
+                ref={sheetRefBancos}
+                snapPoints={[0, Number(height - ((width * 0.17) + getStatusBarHeight(true)))]}
+                borderRadius={10}
+                renderContent={() => {
+                    return (
+                        <View
+                            style={{
+                                backgroundColor: '#f7f7f7',
+                                padding: 16,
+                                minHeight: (height - ((width * 0.147) + getStatusBarHeight(true))),
+                                maxHeight: undefined
+                            }}>
+                            <View style={styles.viewDownShet}>
+                                <View style={styles.buttonMInChet} />
+                            </View>
+                            <FlatList
+                                data={BANCOS}
+                                showsVerticalScrollIndicator={false}
+                                style={{ width: '100%', height: '100%' }}
+                                ItemSeparatorComponent={() => <View style={styles.separateItem} />}
+                                renderItem={({ item, index }: { item: Bank, index: number }) => RenderBancos(item, index)}
+                                keyExtractor={({ item, index }: any) => String(faker.random.alphaNumeric(21))}
+                            />
+                        </View>
+                    )
+                }}
+            />
+
+            <BottomSheet
+                ref={sheetRefTipoConta}
+                snapPoints={[0, Number(height - ((width * 0.17) + getStatusBarHeight(true)))]}
+                borderRadius={10}
+                renderContent={() => {
+                    return (
+                        <View
+                            style={{
+                                backgroundColor: '#f7f7f7',
+                                padding: 16,
+                                minHeight: (height - ((width * 0.147) + getStatusBarHeight(true))),
+                                maxHeight: undefined
+                            }}>
+                            <View style={styles.viewDownShet}>
+                                <View style={styles.buttonMInChet} />
+                            </View>
+                            <FlatList
+                                data={TIPOCONTA}
+                                showsVerticalScrollIndicator={false}
+                                style={{ width: '100%', height: '100%' }}
+                                ItemSeparatorComponent={() => <View style={styles.separateItem} />}
+                                renderItem={({ item, index }: { item: string, index: number }) => RenderOptionsConta(item, index)}
+                                keyExtractor={({ item, index }: any) => String(faker.random.alphaNumeric(21))}
+                            />
+                        </View>
+                    )
+                }}
+            />
         </>
     )
+
+
 }
 export default RegisterTruck;
