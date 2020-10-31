@@ -18,12 +18,14 @@ import AsyncStorage from '@react-native-community/async-storage';
 import { mask } from 'remask';
 import api from '../../service/api';
 import faker from 'faker';
+import { useNavigation } from '@react-navigation/native'
 import Toast from 'react-native-simple-toast';
 import { getStatusBarHeight } from 'react-native-status-bar-height';
 import KeyboardH from '../../functions/keyboard';
 import { useStatus } from '../../context/ContextAuth'
 import * as EmailValidator from 'email-validator';
 import { RectButton } from 'react-native-gesture-handler';
+import { UserDataTruck,UserDataTruck2 } from '../../types/truck';
 const width = Dimensions.get("window").width;
 const height = Dimensions.get("window").height;
 
@@ -38,7 +40,8 @@ const RegisterTruck: React.FC = () => {
     const [stageProgressInputs, setStageProgressInputs] = useState<number>(0);
     const [progressTitle, setProgressTitle] = useState<string>('DADOS PESSOAIS');
     const keyboardHeight = KeyboardH();
-    const { setStatus } = useStatus()
+    const { setStatus } = useStatus();
+    const navigation = useNavigation();
     const [loadingSubmit, setLoadingSubmit] = useState<boolean>(false);
     const [toggleCheckBox, setToggleCheckBox] = useState<boolean>(false);
     const [visibleTerms, setVisibleTerms] = useState<boolean>(false);
@@ -396,9 +399,9 @@ const RegisterTruck: React.FC = () => {
             return;
         }
         setLoadingSubmit(true);
-        const data = {
+        const data: UserDataTruck2 = {
             name,
-            email,
+            email: email.toLowerCase(),
             password,
             telefone,
             CPF: cpf,
@@ -411,6 +414,7 @@ const RegisterTruck: React.FC = () => {
             accountCPF,
             vehicleModel,
             vehiclePlate,
+            status:'pending',
             numberRNTRC,
             bodywork,
             bodyworkType,
@@ -418,17 +422,22 @@ const RegisterTruck: React.FC = () => {
         };
         api.post('/truck/users/create', data).then(res => {
             if (res.data.message === 'success') {
-                return storeStatus();
+                const dataUser: UserDataTruck2 = data;
+                return storeStatus(dataUser);
             }
+            navigation.goBack();
             return Toast.showWithGravity(`${res.data.res}`, Toast.LONG, Toast.TOP)
         }).catch(() => {
+            navigation.goBack();
             return Toast.showWithGravity('Ocorreu um Erro! Tente novamente mais tarde!', Toast.LONG, Toast.TOP)
         })
     }
-    const storeStatus = async () => {
+    const storeStatus = async (userData: UserDataTruck2) => {
         const value = 1;
         try {
+            await AsyncStorage.setItem('@userData', JSON.stringify(userData))
             await AsyncStorage.setItem('@status', `${value}`);
+            await AsyncStorage.setItem('@truck', `${true}`);
             return setStatus(value);
         } catch (e) {
             // saving error

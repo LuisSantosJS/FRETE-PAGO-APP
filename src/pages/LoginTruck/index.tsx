@@ -8,6 +8,7 @@ import {
 } from 'react-native';
 import api from '../../service/api';
 import styles from './styles';
+import { useLoading } from '../../context/ContextAuth'
 import AsyncStorage from '@react-native-community/async-storage';
 import * as EmailValidator from 'email-validator';
 import Toast from 'react-native-simple-toast';
@@ -17,15 +18,20 @@ import KeyboardH from '../../functions/keyboard';
 const FretePago = require('../../assets/fretepago.png');
 const Email = require('../../assets/email.png');
 const Senha = require('../../assets/senha.png');
-import { useStatus } from '../../context/ContextAuth'
+import { useStatus, useToken, useUserData, } from '../../context/ContextAuth';
+import { UserDataTruck } from '../../types/truck';
 
 
 const LoginTruck: React.FC = () => {
     const navigation = useNavigation();
     const keyboardHeight = KeyboardH();
+    const { setLoading } = useLoading();
+    const { setToken } = useToken();
+    const { setUserData } = useUserData();
     const [emailInput, setEmailInput] = useState<string>('');
     const [senhaInput, setSenhaInput] = useState<string>('');
-    const { setStatus } = useStatus()
+    const [loadingSubmit, setLoadingSubmit] = useState<boolean>(false);
+    const { status, setStatus } = useStatus()
     const handleRegister = () => {
         navigation.navigate('RegisterTruck')
     }
@@ -48,29 +54,50 @@ const LoginTruck: React.FC = () => {
     }
 
     const SumbitAPILogin = () => {
+        if (loadingSubmit) {
+            return;
+        }
+        setLoadingSubmit(true);
         const data = {
             email: emailInput,
             password: senhaInput
         }
         api.post('/truck/users/login', data).then(res => {
             if (res.data.message === 'success') {
-                return storeStatus(2);
+                return storeStatus(2, res.data.data, res.data.token);
             } else {
+                setLoadingSubmit(false);
+                if (String(res.data.res) === 'User in evaluation or waiting | Usuário em avaliação ou em espera') {
+                    AsyncStorage.setItem('@status', '1').then((res) => {
+                        setStatus(1);
+                    })
+                }
                 return Toast.showWithGravity(`${res.data.res}`, Toast.LONG, Toast.TOP);
             }
         }).catch(() => {
+            setLoadingSubmit(false);
+
             return Toast.showWithGravity(`Ocorreu um erro! Tente novamente mais tarde!`, Toast.LONG, Toast.TOP);
         })
     }
 
-    const storeStatus = async (value: number) => {
+    const storeStatus = async (value: number, userData: UserDataTruck, token: string) => {
         try {
-            await AsyncStorage.setItem('@status', `${value}`);
+            // await AsyncStorage.setItem('@status', `${value}`);
+
+            await AsyncStorage.setItem('@savedTruck', `${true}`);
+            await AsyncStorage.setItem('@truck', `${true}`);
+            const jsonValue = JSON.stringify(userData);
+            await AsyncStorage.setItem('@userData', jsonValue);
+            await AsyncStorage.setItem('@token', `${token}`);
+            setToken(token);
+            setUserData(userData);
             return setStatus(value);
         } catch (e) {
             // saving error
             console.log(e)
         }
+        return setLoadingSubmit(false)
 
     }
     return (
@@ -119,9 +146,10 @@ const LoginTruck: React.FC = () => {
                         <TouchableOpacity onPress={onLogin} activeOpacity={0.5} style={styles.login}>
                             <Text style={styles.textLogin}>LOGIN</Text>
                         </TouchableOpacity>
-                        <TouchableOpacity onPress={handleRegister} activeOpacity={0.5}>
-                            <Text style={styles.textRegister}>Não possui cadastro?</Text>
-                        </TouchableOpacity>
+                        {status !== 4 &&
+                            <TouchableOpacity onPress={handleRegister} activeOpacity={0.5}>
+                                <Text style={styles.textRegister}>Não possui cadastro?</Text>
+                            </TouchableOpacity>}
                     </View>}
 
             </View>

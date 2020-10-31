@@ -5,6 +5,7 @@ import Waiting from '../pages/Waiting';
 import LoadingPage from '../pages/Loading';
 import TruckRouter from './TruckRouter';
 import CompanyRouter from './CompanyRouter';
+import LoginTruck from '../pages/LoginTruck';
 const MainRouter: React.FC = () => {
     const { loading } = useLoading();
     const { status } = useStatus();
@@ -20,6 +21,8 @@ const MainRouter: React.FC = () => {
             return <TruckRouter />;
         case 3:
             return <CompanyRouter />;
+        case 4:
+            return <LoginTruck/>;
         default:
             return <AuthRouter />;
     }
@@ -31,6 +34,6 @@ export default MainRouter;
 /// STATUS
 
 // 0 - NÃO REGISTRADO/ NÃO CADASTRADO
-// 1 - A ESPERA DA LIBERAÇÃO
+// 1 - A ESPERA DA LIBERAÇÃO / CAMINHONEIRO 
 // 2 - LOGADO / LIBERADO CAMINHONEIRO 
 // 3 - LOGADO / LIBERADO EMPRESA
