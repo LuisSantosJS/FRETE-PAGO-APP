@@ -25,13 +25,12 @@ import { UserDataTruck } from '../../types/truck';
 const LoginTruck: React.FC = () => {
     const navigation = useNavigation();
     const keyboardHeight = KeyboardH();
-    const { setLoading } = useLoading();
     const { setToken } = useToken();
     const { setUserData } = useUserData();
     const [emailInput, setEmailInput] = useState<string>('');
     const [senhaInput, setSenhaInput] = useState<string>('');
     const [loadingSubmit, setLoadingSubmit] = useState<boolean>(false);
-    const { status, setStatus } = useStatus()
+    const { setStatus } = useStatus()
     const handleRegister = () => {
         navigation.navigate('RegisterTruck')
     }
@@ -87,7 +86,7 @@ const LoginTruck: React.FC = () => {
             account: userData.account,
             accountCPF: userData.accountCPF,
             agency: userData.agency,
-            bankNumber:userData.bankNumber,
+            bankNumber: userData.bankNumber,
             bodywork: userData.bodywork,
             bodyworkType: userData.bodyworkType,
             dateOfBirth: userData.dateOfBirth,
@@ -169,10 +168,9 @@ const LoginTruck: React.FC = () => {
                         <TouchableOpacity onPress={onLogin} activeOpacity={0.5} style={styles.login}>
                             <Text style={styles.textLogin}>LOGIN</Text>
                         </TouchableOpacity>
-                        {status !== 4 &&
-                            <TouchableOpacity onPress={handleRegister} activeOpacity={0.5}>
-                                <Text style={styles.textRegister}>Não possui cadastro?</Text>
-                            </TouchableOpacity>}
+                        <TouchableOpacity onPress={handleRegister} activeOpacity={0.5}>
+                            <Text style={styles.textRegister}>Não possui cadastro?</Text>
+                        </TouchableOpacity>
                     </View>}
 
             </View>
