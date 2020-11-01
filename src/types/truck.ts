@@ -12,6 +12,7 @@ interface UserDataTruck {
     account: string;
     nameAccount: string;
     accountCPF: string;
+    avatar: string;
     vehicleModel: string;
     vehiclePlate: string;
     numberRNTRC: string;
@@ -32,6 +33,7 @@ interface UserDataTruck2 {
     bankNumber: string;
     typeBank: string;
     agency: string;
+    avatar: string;
     account: string;
     nameAccount: string;
     accountCPF: string;

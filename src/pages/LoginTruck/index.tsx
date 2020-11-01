@@ -92,6 +92,7 @@ const LoginTruck: React.FC = () => {
             dateOfBirth: userData.dateOfBirth,
             email: userData.email,
             id: userData.id,
+            avatar: userData.avatar,
             name: userData.name,
             nameAccount: userData.nameAccount,
             numberCNH: userData.numberCNH,
@@ -114,6 +115,7 @@ const LoginTruck: React.FC = () => {
             await AsyncStorage.setItem('@token', `${token}`);
             setToken(token);
             setUserData(userData);
+            console.log(data)
             return setStatus(value);
         } catch (e) {
             // saving error

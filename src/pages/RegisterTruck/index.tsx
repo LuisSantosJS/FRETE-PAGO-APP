@@ -414,6 +414,7 @@ const RegisterTruck: React.FC = () => {
             accountCPF,
             vehicleModel,
             vehiclePlate,
+            avatar:'',
             status:'pending',
             numberRNTRC,
             bodywork,

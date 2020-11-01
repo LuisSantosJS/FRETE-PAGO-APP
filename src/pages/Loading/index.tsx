@@ -31,7 +31,9 @@ const LoadingPage: React.FC = () => {
             const truck = await AsyncStorage.getItem('@truck');
             console.log('truck:', truck)
             if (value !== null) {
-
+                if(Number(value) === 0){
+                    return setLoading(false)
+                }
                 if (Number(value) === 1) {
                     getDataUser();
                 }
@@ -69,6 +71,7 @@ const LoadingPage: React.FC = () => {
                             AsyncStorage.setItem('@token', String(res.data.token)).then(() => {
                                 setToken(res.data.token);
                                 setStatus(2);
+                                setUserData(jsonValue)
                                 setLoading(false)
                             })
                         } else {

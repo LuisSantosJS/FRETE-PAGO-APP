@@ -4,43 +4,102 @@ import {
     Dimensions,
     Image,
     Text,
-    ScrollView
+    ScrollView,
+    TouchableOpacity
 } from 'react-native';
+
 import styles from './styles';
+import ImagePicker, { ImagePickerResponse } from 'react-native-image-picker';
 import { RectButton } from 'react-native-gesture-handler';
 import { useNavigation } from '@react-navigation/native';
 import faker from 'faker';
-import { useStatus } from '../../context/ContextAuth';
+//@ts-ignore
+import ImgToBase64 from 'react-native-image-base64';
+import { useStatus, useUserData, useToken } from '../../context/ContextAuth';
+import api from '../../service/api';
+import Toast from 'react-native-simple-toast'
 import AsyncStorage from '@react-native-community/async-storage';
 import { getStatusBarHeight } from 'react-native-status-bar-height'
+import { UserDataTruck2 } from '../../types/truck';
 const Logo = require('../../assets/fretepago.png');
 const NotificationIcone = require('../../assets/notification.png')
 const HomeIcone = require('../../assets/home.png');
 const profile = require('../../assets/profile.png');
 const PersonCalendarIcone = require('../../assets/calendar_person.png');
 const width = Dimensions.get("window").width;
-
+const NotAvatar = require('../../assets/notAvatar.png');
+var options = {
+    title: 'Select Avatar',
+    storageOptions: {
+        skipBackup: true,
+        path: 'images'
+    }
+};
 const ProfileTruck: React.FC = () => {
     faker.locale = 'pt_BR';
+    const { token } = useToken();
     const navigation = useNavigation();
     const { setStatus } = useStatus();
-
-
+    const { userData, setUserData } = useUserData();
     const onExitAccount = async () => {
         AsyncStorage.clear();
         setStatus(0);
+    }
+
+    const onGetImage = () => {
+        ImagePicker.launchImageLibrary(options, (response) => {
+            if (response.didCancel) {
+                return;
+            }
+            if (response.error) {
+                return;
+            }
+            return onConvertImage(response);
+        });
+    }
+
+    const onConvertImage = (image: ImagePickerResponse) => {
+        console.log('size', image)
+        ImgToBase64.getBase64String(image.uri)
+            .then((base64String: string) => onUpdateProfile(base64String))
+            .catch((err: any) => console.log(err));
+    }
+
+    const onUpdateProfile = (avatar: string) => {
+        console.log('base64', avatar)
+        const config = {
+            headers: {
+                'x-access-token': `${token}`
+            }
+        }
+        api.post('/truck/users/avatar/update', {
+            avatar: avatar,
+            email: String(userData.email)
+        }, config).then(res => {
+            if (res.data.message === 'success') {
+                setUserData({ ...userData, avatar: avatar });
+                return Toast.showWithGravity(`${res.data.res}`, Toast.LONG, Toast.TOP);
+
+            }
+            console.log(res.data)
+
+        }).catch(e => console.log(e))
     }
     return (
         <>
             <View style={{ width: '100%', height: getStatusBarHeight(true), backgroundColor: 'white' }} />
             <View style={styles.header}>
+
                 <Image resizeMode='contain' style={{ height: '70%' }} source={Logo} />
+
             </View>
             <ScrollView>
                 <View style={styles.container}>
                     <View style={styles.containerProfilePhoto}>
-                        <Image source={{ uri: faker.image.avatar() }} style={[styles.profile, styles.shadow, { borderWidth: 2, borderColor: '#707070' }]} />
-                        <Text style={styles.textProfile}>{faker.name.firstName()} {faker.name.lastName()}</Text>
+                        <TouchableOpacity onPress={onGetImage}>
+                            <Image resizeMode='contain' source={String(userData.avatar).length === 0 ? NotAvatar : { uri: String('data:image/png;base64,' + String(userData.avatar)) }} style={[styles.profile, styles.shadow, { borderWidth: 2, borderColor: '#707070' }]} />
+                        </TouchableOpacity>
+                        <Text style={styles.textProfile}>{userData.name}</Text>
                     </View>
                     <RectButton style={styles.viewRowOptions}>
                         <Image source={profile} resizeMode='contain' style={{ height: '80%' }} />
