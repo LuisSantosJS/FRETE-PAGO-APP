@@ -15,10 +15,11 @@ import { UserDataTruck } from '../../types/truck';
 const Logo = require('../../assets/fretepago.png')
 const Loading = require('../../assets/lottie/loading.gif');
 const LoadingPage: React.FC = () => {
-    const { loading, setLoading } = useLoading();
-    const { status, setStatus } = useStatus();
-    const { token, setToken } = useToken();
-    const { userData, setUserData } = useUserData();
+    const { setLoading } = useLoading();
+    const { setStatus } = useStatus();
+    const { setToken } = useToken();
+    const { setUserData } = useUserData();
+
     useEffect(() => {
         getStatus();
     }, []);
@@ -30,17 +31,14 @@ const LoadingPage: React.FC = () => {
             const truck = await AsyncStorage.getItem('@truck');
             console.log('truck:', truck)
             if (value !== null) {
-                if (Boolean(truck) === true) {
-                    if (Number(value) === 1) {
-                        getDataUser();
-                    }
-                    if (Number(value) === 2) {
-                        loginUser()
-                    }
+
+                if (Number(value) === 1) {
+                    getDataUser();
                 }
-                else {
-                    /// empresa
+                if (Number(value) === 2) {
+                    loginUser()
                 }
+
             }
             else {
                 return setLoading(false)
@@ -54,20 +52,46 @@ const LoadingPage: React.FC = () => {
 
     const loginUser = async () => {
         const value = await AsyncStorage.getItem('@userData');
+        const tokens = await AsyncStorage.getItem('@token');
+        console.log('login user = > userData', value);
+        console.log('login user = > token', tokens)
         if (value !== null) {
             const jsonValue: UserDataTruck = JSON.parse(value);
+            setToken(String(tokens))
             api.get(`/truck/users/status?email=${jsonValue.email}`).then((res) => {
                 if (String(res.data.status) === 'active') {
-                    setStatus(2);
-                    setLoading(false)
+                    api.post('/truck/users/login', {
+                        email: String(jsonValue.email).toLowerCase(),
+                        password: String(jsonValue.password)
+                    }).then((res) => {
+                        console.log('response LoginUser', res.data)
+                        if (res.data.message === 'success') {
+                            AsyncStorage.setItem('@token', String(res.data.token)).then(() => {
+                                setToken(res.data.token);
+                                setStatus(2);
+                                setLoading(false)
+                            })
+                        } else {
+                            AsyncStorage.setItem('@status', '0').then(() => {
+                                setStatus(0);
+                                setLoading(false);
+                            })
+                        }
+
+                    }).catch(() => {
+                        setStatus(0);
+                        setLoading(false);
+                    })
+
                 } else {
-                    setStatus(1);
+                    setStatus(0);
                     setLoading(false);
                 }
             }).catch(() => {
-                setStatus(1);
+                setStatus(0);
                 setLoading(false);
             })
+        } else {
         }
     }
     // const finish = () => {
@@ -82,7 +106,7 @@ const LoadingPage: React.FC = () => {
                 const jsonValue: UserDataTruck = JSON.parse(value);
                 getInfoUsetTruck(jsonValue);
             } else {
-                setStatus(1);
+                setStatus(0);
                 setLoading(false);
             }
         } catch (error) {
@@ -99,14 +123,29 @@ const LoadingPage: React.FC = () => {
                 setLoading(false);
             }
             if (String(res.data.status) === 'active') {
-                AsyncStorage.setItem('@status', '2').then(() => {
-                    setStatus(2);
-                    setUserData(value);
+                api.post('/truck/users/login', {
+                    email: String(value.email).toLowerCase(),
+                    password: String(value.password)
+                }).then((ress => {
+                    if (ress.data.message === 'success') {
+                        setToken(ress.data.token);
+                        console.log('token:', ress.data.token)
+                        AsyncStorage.setItem('@status', '2').then(() => {
+                            setStatus(2);
+                            setUserData(value);
+                            setLoading(false);
+                        })
+                    } else {
+                        setStatus(0);
+                        setLoading(false);
+                    }
+                })).catch(() => {
+                    setStatus(0);
                     setLoading(false);
                 })
             }
         }).catch(() => {
-            setStatus(1);
+            setStatus(0);
             setLoading(false);
         })
     }

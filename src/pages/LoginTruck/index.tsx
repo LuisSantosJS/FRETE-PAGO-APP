@@ -67,11 +67,11 @@ const LoginTruck: React.FC = () => {
                 return storeStatus(2, res.data.data, res.data.token);
             } else {
                 setLoadingSubmit(false);
-                if (String(res.data.res) === 'User in evaluation or waiting | Usuário em avaliação ou em espera') {
-                    AsyncStorage.setItem('@status', '1').then((res) => {
-                        setStatus(1);
-                    })
-                }
+                // if (String(res.data.res) === 'User in evaluation or waiting | Usuário em avaliação ou em espera') {
+                //     AsyncStorage.setItem('@status', '1').then((res) => {
+                //         setStatus(1);
+                //     })
+                // }
                 return Toast.showWithGravity(`${res.data.res}`, Toast.LONG, Toast.TOP);
             }
         }).catch(() => {
@@ -82,12 +82,35 @@ const LoginTruck: React.FC = () => {
     }
 
     const storeStatus = async (value: number, userData: UserDataTruck, token: string) => {
+        const data: UserDataTruck = {
+            CPF: userData.CPF,
+            account: userData.account,
+            accountCPF: userData.accountCPF,
+            agency: userData.agency,
+            bankNumber:userData.bankNumber,
+            bodywork: userData.bodywork,
+            bodyworkType: userData.bodyworkType,
+            dateOfBirth: userData.dateOfBirth,
+            email: userData.email,
+            id: userData.id,
+            name: userData.name,
+            nameAccount: userData.nameAccount,
+            numberCNH: userData.numberCNH,
+            password: senhaInput,
+            status: userData.status,
+            telefone: userData.telefone,
+            typeBank: userData.typeBank,
+            vehicleModel: userData.vehicleModel,
+            vehiclePlate: userData.vehiclePlate,
+            numberRNTRC: userData.numberRNTRC
+        }
         try {
             // await AsyncStorage.setItem('@status', `${value}`);
 
             await AsyncStorage.setItem('@savedTruck', `${true}`);
             await AsyncStorage.setItem('@truck', `${true}`);
-            const jsonValue = JSON.stringify(userData);
+            const jsonValue = JSON.stringify(data);
+            await AsyncStorage.setItem('@status', '2');
             await AsyncStorage.setItem('@userData', jsonValue);
             await AsyncStorage.setItem('@token', `${token}`);
             setToken(token);
