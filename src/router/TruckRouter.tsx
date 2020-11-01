@@ -21,6 +21,7 @@ import ProfileTruck from '../pages/ProfileTruck';
 import NotificationTruck from '../pages/NotificationTruck';
 import ManualUsoTruck from '../pages/ManualUsoTruck';
 import Sobre from '../pages/Sobre';
+import AlterarPerfil from '../pages/AlterarPerfil';
 const AppStack = createStackNavigator();
 const FretePago = require('../assets/fretepago.png');
 const width = Dimensions.get("window").width;
@@ -92,6 +93,13 @@ const TruckRouter: React.FC = () => {
                     }}
                     component={Sobre}
                     name='Sobre'
+                />
+                <AppStack.Screen
+                    options={{
+                        header: ({ navigation }) => Header(navigation)
+                    }}
+                    component={AlterarPerfil}
+                    name='AlterarPerfil'
                 />
             </AppStack.Navigator>
         </NavigationContainer>

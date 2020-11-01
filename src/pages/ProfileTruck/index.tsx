@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
     View,
     Dimensions,
@@ -7,7 +7,7 @@ import {
     ScrollView,
     TouchableOpacity
 } from 'react-native';
-
+import Dialog from "react-native-dialog";
 import styles from './styles';
 import ImagePicker, { ImagePickerResponse } from 'react-native-image-picker';
 import { RectButton } from 'react-native-gesture-handler';
@@ -41,6 +41,7 @@ const ProfileTruck: React.FC = () => {
     const navigation = useNavigation();
     const { setStatus } = useStatus();
     const { userData, setUserData } = useUserData();
+    const [modalSairVisible, setModalSairVisible] = useState<boolean>(false);
     const onExitAccount = async () => {
         AsyncStorage.clear();
         setStatus(0);
@@ -101,7 +102,7 @@ const ProfileTruck: React.FC = () => {
                         </TouchableOpacity>
                         <Text style={styles.textProfile}>{userData.name}</Text>
                     </View>
-                    <RectButton style={styles.viewRowOptions}>
+                    <RectButton onPress={() => navigation.navigate('AlterarPerfil')} style={styles.viewRowOptions}>
                         <Image source={profile} resizeMode='contain' style={{ height: '80%' }} />
                         <Text style={styles.textOptions}>Alterar perfil</Text>
                     </RectButton>
@@ -109,11 +110,11 @@ const ProfileTruck: React.FC = () => {
                         <Image source={profile} resizeMode='contain' style={{ height: '80%' }} />
                         <Text style={styles.textOptions}>Manual de uso</Text>
                     </RectButton>
-                    <RectButton onPress={() => navigation.navigate('Sobre')}  style={styles.viewRowOptions}>
+                    <RectButton onPress={() => navigation.navigate('Sobre')} style={styles.viewRowOptions}>
                         <Image source={profile} resizeMode='contain' style={{ height: '80%' }} />
                         <Text style={styles.textOptions}>Sobre</Text>
                     </RectButton>
-                    <RectButton onPress={onExitAccount} style={[styles.viewRowOptions, { borderBottomWidth: 1 }]}>
+                    <RectButton onPress={() => setModalSairVisible(true)} style={[styles.viewRowOptions, { borderBottomWidth: 1 }]}>
                         <Image source={profile} resizeMode='contain' style={{ height: '80%' }} />
                         <Text style={styles.textOptions}>Sair</Text>
                     </RectButton>
@@ -132,6 +133,11 @@ const ProfileTruck: React.FC = () => {
                     <Image style={{ height: '80%' }} resizeMode='contain' source={NotificationIcone} />
                 </RectButton>
             </View>
+            <Dialog.Container visible={modalSairVisible}>
+                <Dialog.Title>Tem certeza que deseja sair?</Dialog.Title>
+                <Dialog.Button onPress={() => setModalSairVisible(false)} label="  Cancelar  " />
+                <Dialog.Button onPress={() => onExitAccount()} label="  Sair  " />
+            </Dialog.Container>
         </>
     )
 }
