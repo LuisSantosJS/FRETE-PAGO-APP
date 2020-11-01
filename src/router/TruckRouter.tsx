@@ -19,6 +19,8 @@ import PropostasAceitas from '../pages/PropostasAceitas';
 import Entregues from '../pages/Entregues';
 import ProfileTruck from '../pages/ProfileTruck';
 import NotificationTruck from '../pages/NotificationTruck';
+import ManualUsoTruck from '../pages/ManualUsoTruck';
+import Sobre from '../pages/Sobre';
 const AppStack = createStackNavigator();
 const FretePago = require('../assets/fretepago.png');
 const width = Dimensions.get("window").width;
@@ -77,6 +79,20 @@ const TruckRouter: React.FC = () => {
                     component={NotificationTruck}
                     name='NotificationTruck'
                 />
+                <AppStack.Screen
+                    options={{
+                        header: ({ navigation }) => Header(navigation)
+                    }}
+                    component={ManualUsoTruck}
+                    name='ManualUsoTruck'
+                />
+                <AppStack.Screen
+                    options={{
+                        header: ({ navigation }) => Header(navigation)
+                    }}
+                    component={Sobre}
+                    name='Sobre'
+                />
             </AppStack.Navigator>
         </NavigationContainer>
     );
@@ -87,7 +103,7 @@ export default TruckRouter;
 const Header = (navigation: any) => {
     return (
         <>
-            <View style={{ width: '100%', height: getStatusBarHeight(true), backgroundColor:'white' }} />
+            <View style={{ width: '100%', height: getStatusBarHeight(true), backgroundColor: 'white' }} />
             <View style={styles.header}>
                 <RectButton onPress={() => navigation.goBack()} style={styles.arrowView}>
                     <Icon.MaterialIcons name={Platform.OS === 'ios' ? 'arrow-back-ios' : 'arrow-back'} size={width * 0.08} color='#707070' />

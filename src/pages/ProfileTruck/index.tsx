@@ -105,15 +105,11 @@ const ProfileTruck: React.FC = () => {
                         <Image source={profile} resizeMode='contain' style={{ height: '80%' }} />
                         <Text style={styles.textOptions}>Alterar perfil</Text>
                     </RectButton>
-                    <RectButton style={styles.viewRowOptions}>
-                        <Image source={profile} resizeMode='contain' style={{ height: '80%' }} />
-                        <Text style={styles.textOptions}>Alterar dados empresa</Text>
-                    </RectButton>
-                    <RectButton style={styles.viewRowOptions}>
+                    <RectButton onPress={() => navigation.navigate('ManualUsoTruck')} style={styles.viewRowOptions}>
                         <Image source={profile} resizeMode='contain' style={{ height: '80%' }} />
                         <Text style={styles.textOptions}>Manual de uso</Text>
                     </RectButton>
-                    <RectButton style={styles.viewRowOptions}>
+                    <RectButton onPress={() => navigation.navigate('Sobre')}  style={styles.viewRowOptions}>
                         <Image source={profile} resizeMode='contain' style={{ height: '80%' }} />
                         <Text style={styles.textOptions}>Sobre</Text>
                     </RectButton>

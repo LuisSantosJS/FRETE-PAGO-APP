@@ -4,7 +4,7 @@ import {
     Image,
     Text,
     TextInput,
-    TouchableOpacity, Platform
+    TouchableOpacity, Platform, ActivityIndicator
 } from 'react-native';
 import api from '../../service/api';
 import styles from './styles';
@@ -168,7 +168,9 @@ const LoginTruck: React.FC = () => {
                 {keyboardHeight === 0 &&
                     <View style={styles.viewLoginRegister}>
                         <TouchableOpacity onPress={onLogin} activeOpacity={0.5} style={styles.login}>
-                            <Text style={styles.textLogin}>LOGIN</Text>
+                            {loadingSubmit ? 
+                            <ActivityIndicator size='large' color='white'/>:
+                            <Text style={styles.textLogin}>LOGIN</Text>}
                         </TouchableOpacity>
                         <TouchableOpacity onPress={handleRegister} activeOpacity={0.5}>
                             <Text style={styles.textRegister}>Não possui cadastro?</Text>
